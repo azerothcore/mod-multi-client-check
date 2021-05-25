@@ -38,7 +38,7 @@ public:
                     if (player != login)
                     {
                         // If Remote Address matches, remove the player from the world
-                        if (player->GetSession()->GetRemoteAddress() == login->GetSession()->GetRemoteAddress())
+                        if (player->GetSession()->GetRemoteAddress() == login->GetSession()->GetRemoteAddress() && !AccountMgr::IsGMAccount(player->GetSession()->GetSecurity()))
                             {
 				if (++count > CountLimit)
 				{
