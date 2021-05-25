@@ -8,7 +8,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        compiler: [clang6, clang9, clang10]
+        compiler: [clang]
     runs-on: ubuntu-20.04
     name: ${{ matrix.compiler }}
     env:
@@ -24,15 +24,15 @@ jobs:
           submodules: 'recursive'
           path: 'modules/mod-multi-client-check'
       - name: Cache
-        uses: actions/cache@v1.1.2
+        uses: actions/cache@v2
         with:
-          path: /home/runner/.ccache
+          path: var/ccache
           key: ccache:${{ matrix.compiler }}:${{ github.ref }}:${{ github.sha }}
           restore-keys: |
             ccache:${{ matrix.compiler }}:${{ github.ref }}
             ccache:${{ matrix.compiler }}
       - name: Configure OS
-        run: source ./apps/ci/ci-install.sh
+        run: source ./apps/ci/ci-conf.sh
         env:
           CONTINUOUS_INTEGRATION: true
       - name: Import db
