@@ -37,6 +37,9 @@ public:
 
 	void OnLogin(Player* player) override
     {
+        if (AccountMgr::IsGMAccount(player->GetSession()->GetSecurity()))
+            return;
+
         uint32 CountLimit = sConfigMgr->GetOption<uint32>("Disallow.Multiple.Client", 0);
 
         if (CountLimit)
@@ -52,21 +55,15 @@ public:
             for (auto const& [accID, session] : sWorld->GetAllSessions())
             {
                 Player* _player = session->GetPlayer();
-                if (!_player)
+                if (!_player || _player == player)
                 {
                     continue;
                 }
 
-                if (player != _player)
+                // If Remote Address matches, remove the player from the world
+                if (player->GetSession()->GetRemoteAddress() == _player->GetSession()->GetRemoteAddress() && ++count > CountLimit)
                 {
-                    // If Remote Address matches, remove the player from the world
-                    if (player->GetSession()->GetRemoteAddress() == _player->GetSession()->GetRemoteAddress() && !AccountMgr::IsGMAccount(player->GetSession()->GetSecurity()))
-                    {
-                        if (++count > CountLimit)
-                        {
-                            player->GetSession()->KickPlayer();
-                        }
-                    }
+                    player->GetSession()->KickPlayer();
                 }
             }
         }
