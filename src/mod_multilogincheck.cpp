@@ -1,3 +1,20 @@
+/*
+ * This file is part of the AzerothCore Project. See AUTHORS file for Copyright information
+ *
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the
+ * Free Software Foundation; either version 2 of the License, or (at your
+ * option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
+ * more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
 /***
  *  @project: Firestorm Freelance
  *  @author: Meltie2013 (github) aka Lilcrazy
@@ -10,6 +27,7 @@
 #include "WorldSession.h"
 #include "Chat.h"
 #include "Player.h"
+#include "StringFormat.h"
 
 // Check to see if the player is attempting to multi-box
 class multi_login_check : public PlayerScript
@@ -17,34 +35,37 @@ class multi_login_check : public PlayerScript
 public:
     multi_login_check() : PlayerScript("multi_login_check") { }
 
-	void OnLogin(Player* player)
+	void OnLogin(Player* player) override
     {
-        uint32 CountLimit = sConfigMgr->GetIntDefault("Disallow.Multiple.Client", 0);
-	if (CountLimit>0)
+        uint32 CountLimit = sConfigMgr->GetOption<uint32>("Disallow.Multiple.Client", 0);
+
+        if (CountLimit)
         {
-	// There is a Limit of Client
-	    if (sConfigMgr->GetBoolDefault("Disallow.Multiple.Client.Announce", true))
+	        // There is a Limit of Client
+	        if (sConfigMgr->GetOption<bool>("Disallow.Multiple.Client.Announce", true))
             {	
-               	std::ostringstream stream;
-		stream << "This Server Max Account of Same IP Is:" << CountLimit;
-		ChatHandler(player->GetSession()).SendSysMessage(stream.str().c_str());
-            }	
-            SessionMap sessions = sWorld->GetAllSessions();
+		        ChatHandler(player->GetSession()).SendSysMessage(Acore::StringFormatFmt("This Server Max Account of Same IP Is: {}", CountLimit));
+            }
+
             uint32 count = 1;
-	    for (SessionMap::iterator itr = sessions.begin(); itr != sessions.end(); ++itr)
+
+            for (auto const& [accID, session] : sWorld->GetAllSessions())
             {
-                if (Player* login = itr->second->GetPlayer())
+                Player* _player = session->GetPlayer();
+                if (!_player)
                 {
-                    if (player != login)
+                    continue;
+                }
+
+                if (player != _player)
+                {
+                    // If Remote Address matches, remove the player from the world
+                    if (player->GetSession()->GetRemoteAddress() == _player->GetSession()->GetRemoteAddress() && !AccountMgr::IsGMAccount(player->GetSession()->GetSecurity()))
                     {
-                        // If Remote Address matches, remove the player from the world
-                        if (player->GetSession()->GetRemoteAddress() == login->GetSession()->GetRemoteAddress() && !AccountMgr::IsGMAccount(player->GetSession()->GetSecurity()))
-                            {
-				if (++count > CountLimit)
-				{
-				    player->GetSession()->KickPlayer();
-				}
-			    }
+                        if (++count > CountLimit)
+                        {
+                            player->GetSession()->KickPlayer();
+                        }
                     }
                 }
             }
