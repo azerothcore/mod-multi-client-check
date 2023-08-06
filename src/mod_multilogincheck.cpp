@@ -35,7 +35,7 @@ class multi_login_check : public PlayerScript
 public:
     multi_login_check() : PlayerScript("multi_login_check") { }
 
-	void OnLogin(Player* player) override
+    void OnLogin(Player* player) override
     {
         if (AccountMgr::IsGMAccount(player->GetSession()->GetSecurity()))
             return;
@@ -44,10 +44,10 @@ public:
 
         if (CountLimit)
         {
-	        // There is a Limit of Client
-	        if (sConfigMgr->GetOption<bool>("Disallow.Multiple.Client.Announce", true))
-            {	
-		        ChatHandler(player->GetSession()).SendSysMessage(Acore::StringFormatFmt("This Server Max Account of Same IP Is: {}", CountLimit));
+            // There is a Limit of Client
+            if (sConfigMgr->GetOption<bool>("Disallow.Multiple.Client.Announce", true))
+            {
+                ChatHandler(player->GetSession()).SendSysMessage(Acore::StringFormatFmt("This Server Max Account of Same IP Is: {}", CountLimit));
             }
 
             uint32 count = 1;
@@ -67,7 +67,7 @@ public:
                 }
             }
         }
-	}
+    }
 };
 
 void AddMultiLoginCheckScripts()
