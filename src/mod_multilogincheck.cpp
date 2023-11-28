@@ -37,7 +37,7 @@ public:
 
     void OnLogin(Player* player) override
     {
-        if (AccountMgr::IsGMAccount(player->GetSession()->GetSecurity()))
+        if (player->GetSession()->IsGMAccount())
             return;
 
         uint32 CountLimit = sConfigMgr->GetOption<uint32>("Disallow.Multiple.Client", 0);
