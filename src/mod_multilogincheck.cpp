@@ -46,9 +46,7 @@ public:
         {
             // There is a Limit of Client
             if (sConfigMgr->GetOption<bool>("Disallow.Multiple.Client.Announce", true))
-            {
-                ChatHandler(player->GetSession()).SendSysMessage(Acore::StringFormatFmt("This Server Max Account of Same IP Is: {}", CountLimit));
-            }
+                ChatHandler(player->GetSession()).SendSysMessage(Acore::StringFormat("This Server Max Account of Same IP Is: {}", CountLimit));
 
             uint32 count = 1;
 
@@ -56,15 +54,11 @@ public:
             {
                 Player* _player = session->GetPlayer();
                 if (!_player || _player == player)
-                {
                     continue;
-                }
 
                 // If Remote Address matches, remove the player from the world
                 if (player->GetSession()->GetRemoteAddress() == _player->GetSession()->GetRemoteAddress() && ++count > CountLimit)
-                {
                     player->GetSession()->KickPlayer();
-                }
             }
         }
     }
