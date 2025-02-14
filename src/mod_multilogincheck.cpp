@@ -28,6 +28,7 @@
 #include "Chat.h"
 #include "Player.h"
 #include "StringFormat.h"
+#include "WorldSessionMgr.h
 
 // Check to see if the player is attempting to multi-box
 class multi_login_check : public PlayerScript
@@ -50,6 +51,7 @@ public:
 
             uint32 count = 1;
 
+            auto const& sessions = sWorldSessionMgr->GetAllSessions();
             for (auto const& [accID, session] : sWorld->GetAllSessions())
             {
                 Player* _player = session->GetPlayer();
