@@ -52,7 +52,7 @@ public:
             uint32 count = 1;
 
             auto const& sessions = sWorldSessionMgr->GetAllSessions();
-            for (auto const& [accID, session] : sWorld->GetAllSessions())
+            for (auto const& [accID, session] : sessions)
             {
                 Player* _player = session->GetPlayer();
                 if (!_player || _player == player)
