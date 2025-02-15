@@ -28,7 +28,7 @@
 #include "Chat.h"
 #include "Player.h"
 #include "StringFormat.h"
-#include "WorldSessionMgr.h
+#include "WorldSessionMgr.h"
 
 // Check to see if the player is attempting to multi-box
 class multi_login_check : public PlayerScript
