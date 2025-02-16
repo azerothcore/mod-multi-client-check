@@ -36,7 +36,7 @@ class multi_login_check : public PlayerScript
 public:
     multi_login_check() : PlayerScript("multi_login_check") { }
 
-    void OnLogin(Player* player) override
+    void OnPlayerLogin(Player* player) override
     {
         if (player->GetSession()->IsGMAccount())
             return;
