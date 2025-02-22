@@ -34,7 +34,9 @@
 class multi_login_check : public PlayerScript
 {
 public:
-    multi_login_check() : PlayerScript("multi_login_check") { }
+    multi_login_check() : PlayerScript("multi_login_check", {
+        PLAYERHOOK_ON_LOGIN
+    }) { }
 
     void OnPlayerLogin(Player* player) override
     {
